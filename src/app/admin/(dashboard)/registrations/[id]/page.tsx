@@ -63,7 +63,7 @@ export default async function RegistrationDetailPage({
         ← Back to registrations
       </Link>
 
-      <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/[0.04]">
+      <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/[0.04] sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <Avatar name={registration.full_name} />
@@ -111,7 +111,7 @@ export default async function RegistrationDetailPage({
         </dl>
       </section>
 
-      <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/[0.04]">
+      <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/[0.04] sm:p-6">
         <h2 className="text-base font-bold text-slate-900">Payment slips</h2>
         {slipViews.length === 0 ? (
           <p className="mt-2 text-sm text-slate-400">
@@ -153,7 +153,7 @@ export default async function RegistrationDetailPage({
       </section>
 
       {registration.payment_status !== "verified" && (
-        <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/[0.04]">
+        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/[0.04] sm:p-6">
           <h2 className="text-base font-bold text-slate-900">Review decision</h2>
           <p className="mb-4 mt-1 text-sm text-slate-500">
             Verifying issues the ticket and emails the QR code to{" "}

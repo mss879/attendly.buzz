@@ -17,11 +17,15 @@ export default async function AdminLayout({
       <AuroraBackground />
 
       {/* Floating app panel */}
-      <div className="flex flex-1 flex-col rounded-[28px] bg-[#f7f4f0]/90 shadow-2xl shadow-orange-950/20 ring-1 ring-white/50 backdrop-blur-xl">
+      <div className="flex flex-1 flex-col rounded-2xl bg-[#f7f4f0]/90 shadow-2xl shadow-orange-950/20 ring-1 ring-white/50 backdrop-blur-xl sm:rounded-[28px]">
         {/* Panel header */}
-        <header className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-7">
+        <header className="flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:px-7 sm:py-4">
           <Logo size="sm" href="/admin" accent="orange" withMark />
-          <form action="/admin/registrations" method="get" className="relative">
+          <form
+            action="/admin/registrations"
+            method="get"
+            className="relative order-last w-full sm:order-none sm:w-auto"
+          >
             <svg
               className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
               viewBox="0 0 24 24"
@@ -36,7 +40,7 @@ export default async function AdminLayout({
               type="search"
               name="q"
               placeholder="Search participants…"
-              className="w-44 rounded-full border border-white/70 bg-white/80 py-2 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 shadow-sm outline-none transition focus:w-56 focus:border-orange-300 focus:ring-2 focus:ring-orange-100 sm:w-56 sm:focus:w-72"
+              className="w-full rounded-full border border-white/70 bg-white/80 py-2 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 shadow-sm outline-none transition focus:border-orange-300 focus:ring-2 focus:ring-orange-100 sm:w-56 sm:focus:w-72"
             />
           </form>
         </header>
@@ -44,13 +48,13 @@ export default async function AdminLayout({
         {/* Sidebar + content */}
         <div className="flex flex-1 flex-col px-3 pb-3 sm:px-4 sm:pb-4 md:flex-row">
           <Sidebar email={user.email ?? ""} />
-          <main className="min-w-0 flex-1 rounded-3xl bg-white/75 p-5 shadow-sm ring-1 ring-black/[0.03] sm:p-7">
+          <main className="min-w-0 flex-1 rounded-2xl bg-white/75 p-4 shadow-sm ring-1 ring-black/[0.03] sm:rounded-3xl sm:p-7">
             {children}
           </main>
         </div>
       </div>
 
-      <p className="pt-3 text-center text-[11px] font-medium uppercase tracking-wider text-white/80">
+      <p className="pt-3 text-center text-[11px] font-medium uppercase tracking-wider text-orange-950/50">
         Attendly Admin · Powered by ARC AI
       </p>
     </div>

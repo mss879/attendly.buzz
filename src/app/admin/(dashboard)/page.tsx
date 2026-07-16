@@ -58,7 +58,7 @@ export default async function AdminDashboardPage() {
     <FadeIn>
       <div className="mb-7 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
             Dashboard
           </h1>
           <p className="mt-0.5 text-sm text-slate-500">{eventConfig.eventName}</p>

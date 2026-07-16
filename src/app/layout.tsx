@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   title: "Attendly",
   description:
     "Attendly — event ticket reservations, payment tracking and QR gate check-in. Powered by ARC AI.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover", // extend under notches/safe areas on modern phones
 };
 
 export default function RootLayout({

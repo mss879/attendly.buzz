@@ -55,15 +55,17 @@ export default async function PortalPage({
   return (
     <main className="flex flex-1 flex-col">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex w-full max-w-2xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3 px-4 py-3.5 sm:py-4">
           <Logo href="/" />
-          <span className="text-sm font-medium text-slate-500">{eventName}</span>
+          <span className="hidden truncate text-sm font-medium text-slate-500 sm:block">
+            {eventName}
+          </span>
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-8">
+      <div className="mx-auto w-full max-w-2xl flex-1 space-y-5 px-4 py-6 sm:space-y-6 sm:py-8">
         {/* Reservation summary */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-bold text-slate-900">
@@ -82,19 +84,20 @@ export default async function PortalPage({
 
         {/* Verified: the ticket */}
         {status === "verified" && ticket && qrImage && (
-          <section className="rounded-2xl border-2 border-emerald-300 bg-white p-6 text-center shadow-sm">
+          <section className="rounded-2xl border-2 border-emerald-300 bg-white p-5 text-center shadow-sm sm:p-6">
             <p className="text-sm font-bold uppercase tracking-wide text-emerald-600">
               Your ticket
             </p>
-            <p className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+            <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
               {ticket.ticket_number}
             </p>
-            {/* Data-URL QR: rendered large for reliable scanning at the gate */}
+            {/* Data-URL QR: sized to the screen but capped so it stays crisp and
+                scannable, even on the smallest phones */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={qrImage}
               alt={`QR code for ticket ${ticket.ticket_number}`}
-              className="mx-auto mt-4 h-64 w-64 rounded-xl border border-slate-200"
+              className="mx-auto mt-4 aspect-square w-full max-w-[16rem] rounded-xl border border-slate-200"
             />
             <p className="mt-3 text-sm text-slate-500">
               Show this QR code at the entrance to check in.
@@ -137,7 +140,7 @@ export default async function PortalPage({
               </div>
             )}
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="text-base font-bold text-slate-900">
                 1. Make the payment
               </h2>

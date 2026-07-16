@@ -6,20 +6,20 @@ export default function HomePage() {
   return (
     <main className="flex flex-1 flex-col">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-4 py-3.5 sm:py-4">
           <Logo href="/" />
-          <span className="text-sm font-medium text-slate-500">
+          <span className="hidden truncate text-sm font-medium text-slate-500 sm:block">
             {eventConfig.eventName}
           </span>
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+      <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:py-10">
+        <div className="mb-7 text-center sm:mb-8">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Reserve your ticket
           </h1>
-          <p className="mt-2 text-slate-500">
+          <p className="mx-auto mt-2 max-w-lg text-sm text-slate-500 sm:text-base">
             Fill in your details to reserve a ticket for{" "}
             <span className="font-semibold text-slate-700">
               {eventConfig.eventName}
@@ -30,7 +30,7 @@ export default function HomePage() {
 
         <RegistrationForm years={batchYears()} />
 
-        <ol className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-3">
+        <ol className="mx-auto mt-8 grid max-w-2xl gap-3 sm:mt-10 sm:grid-cols-3 sm:gap-4">
           {[
             ["1. Reserve", "Submit your details and get a confirmation email."],
             ["2. Pay & upload", "Transfer the ticket fee and upload your payment slip."],

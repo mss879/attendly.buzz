@@ -32,18 +32,18 @@ export function ReviewButtons({ registrationId }: { registrationId: string }) {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <button
           onClick={() => decide("verify")}
           disabled={busy !== null}
-          className="rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md disabled:opacity-60"
+          className="w-full rounded-full bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md disabled:opacity-60 sm:w-auto sm:py-2.5"
         >
           {busy === "verify" ? "Verifying…" : "✓ Verify payment & issue ticket"}
         </button>
         <button
           onClick={() => decide("reject")}
           disabled={busy !== null}
-          className="rounded-full bg-red-50 px-5 py-2.5 text-sm font-bold text-red-700 ring-1 ring-red-200 transition hover:bg-red-100 disabled:opacity-60"
+          className="w-full rounded-full bg-red-50 px-5 py-3 text-sm font-bold text-red-700 ring-1 ring-red-200 transition hover:bg-red-100 disabled:opacity-60 sm:w-auto sm:py-2.5"
         >
           {busy === "reject" ? "Rejecting…" : "✕ Reject slip"}
         </button>

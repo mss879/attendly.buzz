@@ -4,7 +4,7 @@ import { GateScanner } from "@/components/admin/GateScanner";
 export default function ScanPage() {
   return (
     <FadeIn className="mx-auto max-w-lg">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+      <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
         Gate scanner
       </h1>
       <p className="mb-5 mt-0.5 text-sm text-slate-500">
