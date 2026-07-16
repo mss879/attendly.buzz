@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const title = "80th Bradby Viewing Party — Bradby Shield 2026 | Attendly";
+const title = "Attendly — Host & Book Event Tickets Seamlessly";
 const description =
-  "Royal College vs Trinity College on a 28ft LED screen at the Royal College Sports Complex, Colombo 07. Book numbered grandstand seats (Rs 1,500), pay by bank transfer, and check in with a personal QR ticket.";
+  "Create, host, and book tickets for premium events. Attendly offers interactive seating maps, secure payment validation, and instant digital QR entry tickets for event organizers and attendees.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appConfig.appUrl),
@@ -26,14 +26,13 @@ export const metadata: Metadata = {
   description,
   applicationName: "Attendly",
   keywords: [
-    "Bradby Shield 2026",
-    "Bradby viewing party",
-    "Royal College vs Trinity College",
-    "Bradby Colombo",
-    "grandstand seats",
-    "event tickets",
-    "QR ticket",
-    "Attendly",
+    "event ticketing platform",
+    "ticket booking portal",
+    "seating map reservation",
+    "secure ticket validation",
+    "QR gate entry check-in",
+    "event seating planner",
+    "Attendly events",
   ],
   authors: [{ name: "ARC AI", url: "https://www.arcai.agency" }],
   creator: "ARC AI",
@@ -47,7 +46,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/opengraph-image.webp",
+        url: "/opengraph-image.png",
         width: 1024,
         height: 1024,
         alt: title,
@@ -58,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title,
     description,
-    images: ["/opengraph-image.webp"],
+    images: ["/opengraph-image.png"],
   },
   robots: {
     index: true,
