@@ -117,15 +117,15 @@ export function EventDetails() {
   }, []);
 
   return (
-    <section ref={ref} id="experience" className="scroll-mt-8 px-4 pb-16 sm:px-7 sm:pb-20">
+    <section ref={ref} id="experience" className="scroll-mt-8 px-4 py-16 sm:px-7 sm:py-24">
       <div className="event-head mx-auto max-w-2xl text-center">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-orange-700">
           {bradby.subtitle}
         </p>
-        <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold tracking-tight text-black sm:text-3xl">
           A premium open-air theatre night
         </h2>
-        <p className="mt-3 text-sm text-slate-500 sm:text-base">{bradby.description}</p>
+        <p className="mt-3 text-sm text-black sm:text-base">{bradby.description}</p>
       </div>
 
       <div className="event-cards mx-auto mt-10 grid max-w-5xl gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -140,8 +140,8 @@ export function EventDetails() {
                 {f.badge}
               </span>
               <div className="mt-3 text-orange-600">{f.icon}</div>
-              <p className="mt-3 text-xl font-bold tracking-tight text-slate-900">{f.title}</p>
-              <p className="mt-1 text-sm leading-relaxed text-slate-500">{f.text}</p>
+              <p className="mt-3 text-xl font-bold tracking-tight text-black">{f.title}</p>
+              <p className="mt-1 text-sm leading-relaxed text-black">{f.text}</p>
             </div>
           </div>
         ))}
@@ -154,7 +154,7 @@ export function EventDetails() {
             <dt className="text-[11px] font-semibold uppercase tracking-wider text-orange-700/80">
               {item.label}
             </dt>
-            <dd className="mt-0.5 text-sm font-bold text-slate-900">{item.value}</dd>
+            <dd className="mt-0.5 text-sm font-bold text-black">{item.value}</dd>
           </div>
         ))}
       </dl>

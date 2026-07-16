@@ -157,16 +157,16 @@ export function HowItWorks() {
     <section
       ref={ref}
       id="how-it-works"
-      className="scroll-mt-8 px-4 pb-16 sm:px-7 sm:pb-20"
+      className="scroll-mt-8 px-4 py-16 sm:px-7 sm:py-24"
     >
       <div className="how-head mx-auto max-w-2xl text-center">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-orange-700">
           How it works
         </p>
-        <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-bold tracking-tight text-black sm:text-3xl">
           Three steps to the gate
         </h2>
-        <p className="mt-3 text-sm text-slate-600 sm:text-base">
+        <p className="mt-3 text-sm text-black sm:text-base">
           From seat booking to check-in, the whole journey lives in your inbox
           and one personal page — no accounts, no printouts needed.
         </p>
@@ -205,10 +205,10 @@ export function HowItWorks() {
                   <div aria-hidden className="mt-3 text-orange-600 sm:mx-auto sm:flex sm:justify-center">
                     {step.icon}
                   </div>
-                  <h3 className="mt-3 text-base font-bold text-slate-900">
+                  <h3 className="mt-3 text-base font-bold text-black">
                     {step.title}
                   </h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                  <p className="mt-1.5 text-sm leading-relaxed text-black">
                     {step.text}
                   </p>
                 </div>
@@ -218,7 +218,7 @@ export function HowItWorks() {
         </ol>
       </div>
 
-      <p className="how-cta mt-10 text-center text-sm font-medium text-slate-600">
+      <p className="how-cta mt-10 text-center text-sm font-bold text-black">
         Ready when you are —{" "}
         <Link
           href="/book"

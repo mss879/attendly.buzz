@@ -2,14 +2,39 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { Logo } from "@/components/Logo";
 
 export function Preloader({ onComplete }: { onComplete?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mounted, setMounted] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [statusText, setStatusText] = useState("Initializing Scanner...");
 
-  // WebGL Shader Background
+  // Progress and status simulation
+  useEffect(() => {
+    let start = 0;
+    const interval = setInterval(() => {
+      start += Math.floor(Math.random() * 8) + 4;
+      if (start >= 100) {
+        start = 100;
+        clearInterval(interval);
+        setStatusText("Ticket Validated! Access Granted.");
+      } else if (start > 75) {
+        setStatusText("Confirming Seats...");
+      } else if (start > 45) {
+        setStatusText("Verifying Signature...");
+      } else if (start > 15) {
+        setStatusText("Decrypting QR Data...");
+      } else {
+        setStatusText("Reading Ticket...");
+      }
+      setProgress(start);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // WebGL Laser Scanner Background Shader (Grid-free, Flicker-free)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -17,19 +42,19 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
     const gl = canvas.getContext("webgl");
     if (!gl) return;
 
-    // Handle resolution & resizing
     const handleResize = () => {
       if (!canvas || !gl) return;
-      const dpr = Math.min(window.devicePixelRatio, 1.5); // cap DPR at 1.5 for mobile performance
-      canvas.width = canvas.clientWidth * dpr;
-      canvas.height = canvas.clientHeight * dpr;
+      const dpr = Math.min(window.devicePixelRatio, 1.5);
+      const w = canvas.clientWidth || window.innerWidth || 800;
+      const h = canvas.clientHeight || window.innerHeight || 600;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    // Full screen quad geometry
     const vsSource = `
       attribute vec2 position;
       void main() {
@@ -37,58 +62,35 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
       }
     `;
 
-    // Morphing orange/cream fluid shader
     const fsSource = `
       precision mediump float;
       uniform vec2 u_resolution;
       uniform float u_time;
-
-      vec3 palette( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ) {
-          return a + b*cos( 6.28318*(c*t+d) );
-      }
+      uniform float u_progress;
 
       void main() {
           vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-          uv = uv * 2.0 - 1.0;
-          uv.x *= u_resolution.x / u_resolution.y;
-
-          vec2 uv0 = uv;
-          vec3 finalColor = vec3(0.0);
           
-          for (float i = 0.0; i < 2.0; i++) {
-              uv = fract(uv * 1.4) - 0.5;
-
-              float d = length(uv) * exp(-length(uv0));
-
-              vec3 col = palette(length(uv0) + i*0.4 + u_time*0.15, 
-                  vec3(0.8, 0.4, 0.1), 
-                  vec3(0.6, 0.2, 0.0), 
-                  vec3(1.0, 1.0, 1.0), 
-                  vec3(0.0, 0.25, 0.25)
-              );
-
-              d = sin(d*8.0 + u_time*0.4)/8.0;
-              d = abs(d);
-
-              d = pow(0.012 / d, 1.2);
-
-              finalColor += col * d;
-          }
+          vec3 cream = vec3(0.97, 0.96, 0.94); // #f7f4f0
+          vec3 orange = vec3(0.98, 0.35, 0.05); // neon orange
+          vec3 green = vec3(0.05, 0.82, 0.22); // success green
           
-          float intensity = clamp((finalColor.r + finalColor.g + finalColor.b) / 3.0, 0.0, 1.0);
+          // Smooth scanning line moving up and down
+          float laserY = sin(u_time * 2.2) * 0.45 + 0.5;
+          float dist = abs(uv.y - laserY);
           
-          // Cream (#f7f4f0) base
-          vec3 cream = vec3(0.97, 0.96, 0.94);
-          vec3 orange = vec3(0.97, 0.45, 0.09); // #f97316
-          vec3 dark = vec3(0.4, 0.12, 0.0); // depth
+          // Glowing laser line (soft falloff)
+          float laserGlow = exp(-dist * 40.0) * 0.55;
           
-          vec3 color = mix(cream, mix(orange, dark, intensity), intensity);
+          // Lerp laser color from orange to green based on progress
+          vec3 laserColor = mix(orange, green, step(99.5, u_progress));
+          
+          vec3 color = mix(cream, laserColor, laserGlow);
           
           gl_FragColor = vec4(color, 1.0);
       }
     `;
 
-    // Compile helpers
     const compileShader = (type: number, source: string) => {
       const shader = gl.createShader(type);
       if (!shader) return null;
@@ -114,7 +116,6 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
 
     gl.useProgram(program);
 
-    // Buffer setup
     const vertices = new Float32Array([
       -1, -1,  1, -1, -1,  1,
       -1,  1,  1, -1,  1,  1
@@ -129,6 +130,7 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
 
     const resolutionLoc = gl.getUniformLocation(program, "u_resolution");
     const timeLoc = gl.getUniformLocation(program, "u_time");
+    const progressLoc = gl.getUniformLocation(program, "u_progress");
 
     let animationFrameId: number;
     let startTime = Date.now();
@@ -137,6 +139,9 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
       if (!gl || !canvas) return;
       gl.uniform2f(resolutionLoc, canvas.width, canvas.height);
       gl.uniform1f(timeLoc, (Date.now() - startTime) / 1000);
+      
+      const p = parseFloat(canvas.getAttribute("data-progress") || "0");
+      gl.uniform1f(progressLoc, p);
 
       gl.clearColor(0.97, 0.96, 0.94, 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
@@ -157,6 +162,13 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
     };
   }, []);
 
+  // Update canvas progress attribute for the WebGL loop to read
+  useEffect(() => {
+    if (canvasRef.current) {
+      canvasRef.current.setAttribute("data-progress", progress.toString());
+    }
+  }, [progress]);
+
   // Lock body scroll during load
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
@@ -167,57 +179,72 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
     };
   }, []);
 
-  // GSAP 3D Hinge Welcome Animation
+  // GSAP Entrance & Gentle Floating Loop (Runs once on mount)
   useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Float the ticket in
+      gsap.fromTo(
+        ".ticket-wrapper",
+        { y: 50, opacity: 0, scale: 0.9, rotationX: -15 },
+        { y: 0, opacity: 1, scale: 1, rotationX: 0, duration: 1.0, ease: "power3.out" }
+      );
+
+      // Swing ticket gently
+      gsap.to(".ticket-wrapper", {
+        yoyo: true,
+        repeat: -1,
+        y: -6,
+        rotation: 0.8,
+        duration: 2.0,
+        ease: "sine.inOut",
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // GSAP Outro Transition Timeline (Triggers only when progress hits 100%)
+  useEffect(() => {
+    if (progress < 100) return;
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
+          // Explicitly unlock scrolling once doors are open
+          document.documentElement.style.overflow = "";
+          document.body.style.overflow = "";
+          
           setMounted(false);
           if (onComplete) onComplete();
         },
       });
 
-      // Initial gentle hanging swing
-      gsap.fromTo(
-        ".welcome-sign",
-        { rotation: -2, transformOrigin: "top center" },
-        {
-          rotation: 2,
-          transformOrigin: "top center",
-          repeat: -1,
-          yoyo: true,
-          duration: 2.2,
-          ease: "sine.inOut",
-        }
-      );
-
-      // 1. Right hinge breaks, swing down hanging by left
-      tl.to(".welcome-sign", {
-        rotation: 75,
-        transformOrigin: "20px 20px", // top-left area
-        ease: "back.out(2.5)",
-        duration: 1.0,
-        delay: 1.8, // display preloader for ~2 seconds
-      });
-
-      // Swing back slightly
-      tl.to(".welcome-sign", {
-        rotation: 60,
-        transformOrigin: "20px 20px",
-        ease: "sine.inOut",
-        duration: 0.5,
-      });
-
-      // 2. Fall down with gravity acceleration
-      tl.to(".welcome-sign", {
-        y: "120vh",
-        rotation: 85,
+      // Turn off scanner overlay
+      tl.to(".scanner-overlay", {
         opacity: 0,
-        ease: "power2.in",
-        duration: 0.8,
+        duration: 0.3,
       });
 
-      // 3. Doors swing open in 3D + canvas fades out
+      // Flash green validated ticket screen
+      tl.to(".validated-overlay", {
+        opacity: 1,
+        scale: 1.05,
+        duration: 0.4,
+        ease: "back.out(1.8)",
+      });
+
+      // Fly ticket away
+      tl.to(".ticket-wrapper", {
+        scale: 0.7,
+        rotationY: 180,
+        z: -200,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.inOut",
+        delay: 0.5,
+      });
+
+      // Swing doors open
       tl.to(
         ".left-panel",
         {
@@ -226,7 +253,7 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
           duration: 1.2,
           ease: "power3.inOut",
         },
-        "-=0.2"
+        "-=0.4"
       );
 
       tl.to(
@@ -240,6 +267,7 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
         "<"
       );
 
+      // Fade canvas
       tl.to(
         ".webgl-canvas",
         {
@@ -252,7 +280,7 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
     }, containerRef);
 
     return () => ctx.revert();
-  }, [onComplete]);
+  }, [progress, onComplete]);
 
   if (!mounted) return null;
 
@@ -260,9 +288,27 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
     <div
       ref={containerRef}
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#f7f4f0]"
-      style={{ perspective: "1200px" }}
+      style={{ perspective: "1500px" }}
     >
-      {/* WebGL Canvas in background */}
+      <style>{`
+        @keyframes sweep {
+          0% { top: 0%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+        .scanner-line {
+          position: absolute;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, transparent, #f97316, #ea580c, #f97316, transparent);
+          box-shadow: 0 0 10px #f97316, 0 0 20px #ea580c;
+          animation: sweep 3.5s linear infinite;
+        }
+      `}</style>
+
+      {/* WebGL Laser Grid Background */}
       <canvas
         ref={canvasRef}
         className="webgl-canvas absolute inset-0 h-full w-full transition-opacity duration-300"
@@ -274,22 +320,80 @@ export function Preloader({ onComplete }: { onComplete?: () => void }) {
         <div className="right-panel w-1/2 h-full bg-[#f7f4f0]/20 border-l border-orange-950/5 origin-right backdrop-blur-[3px] shadow-[inset_10px_0_30px_rgba(234,88,12,0.03)]" />
       </div>
 
-      {/* Welcome Sign (Hinged Board) */}
-      <div className="welcome-sign relative z-10 flex flex-col items-center gap-2 rounded-3xl bg-white/80 p-8 shadow-2xl ring-1 ring-black/[0.03] backdrop-blur-md max-w-[280px] sm:max-w-xs text-center border border-white/60">
-        {/* Mock chain connectors */}
-        <div className="absolute -top-3 left-1/4 h-3.5 w-1 bg-slate-400 rounded" />
-        <div className="absolute -top-3 right-1/4 h-3.5 w-1 bg-slate-400 rounded" />
+      {/* High-tech admitting ticket */}
+      <div className="ticket-wrapper relative z-10 w-72 sm:w-80 h-[380px] bg-white/40 backdrop-blur-md border border-white/60 shadow-2xl rounded-3xl p-6 flex flex-col justify-between overflow-hidden">
+        {/* Neon Orange Scan line (Sweeps the QR code area) */}
+        <div className="scanner-overlay absolute inset-0 pointer-events-none z-20">
+          <div className="scanner-line" />
+        </div>
 
-        <Logo accent="orange" size="lg" />
-        
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+        {/* Access Granted green holographic flash */}
+        <div className="validated-overlay absolute inset-0 bg-emerald-500/95 backdrop-blur-md z-30 opacity-0 flex flex-col items-center justify-center text-white p-6 scale-90 transition-all duration-300">
+          <span className="text-5xl font-black">✓</span>
+          <h3 className="text-xl font-black uppercase tracking-wider mt-4">
+            Access Granted
+          </h3>
+          <p className="text-[10px] font-bold tracking-widest text-emerald-100 uppercase mt-2">
+            Welcome to the Event
+          </p>
+        </div>
+
+        {/* Ticket Header */}
+        <div className="flex justify-between items-start border-b border-orange-950/10 pb-4">
+          <div className="text-left">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-black">
+              Boarding Pass
+            </span>
+            <h2 className="text-xl font-black tracking-tighter text-black leading-none mt-1">
+              ATTENDLY
+            </h2>
+          </div>
+          <span className="rounded-full bg-black px-2.5 py-1 text-[7px] font-extrabold uppercase tracking-wider text-white">
+            Admit One
           </span>
-          <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-orange-800/80">
-            Entering Experience
-          </span>
+        </div>
+
+        {/* QR Code Container with neon corner brackets */}
+        <div className="relative mx-auto my-3 flex h-32 w-32 items-center justify-center rounded-xl bg-white p-3.5 shadow-md border border-orange-100">
+          {/* Brackets */}
+          <div className="absolute top-1 left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-orange-500 rounded-tl" />
+          <div className="absolute top-1 right-1 w-2.5 h-2.5 border-t-2 border-r-2 border-orange-500 rounded-tr" />
+          <div className="absolute bottom-1 left-1 w-2.5 h-2.5 border-b-2 border-l-2 border-orange-500 rounded-bl" />
+          <div className="absolute bottom-1 right-1 w-2.5 h-2.5 border-b-2 border-r-2 border-orange-500 rounded-br" />
+
+          {/* Styled vector QR code */}
+          <svg className="h-full w-full text-slate-800" viewBox="0 0 100 100">
+            <path d="M0 0h30v30H0zm10 10h10v10H10zm60-10h30v30H70zm10 10h10v10H80zM0 70h30v30H0zm10 10h10v10H10zm35-70h10v10H45zm10 15h10v10H55zm-10 15h15v10H45zm15-30h10v15H60zm-15 45h10v10H45zm15 10h10v20H60zm15-20h10v10H75zm15 10h10v10H90zm-15 10h15v10H75z" fill="currentColor"/>
+          </svg>
+        </div>
+
+        {/* Event details */}
+        <div className="text-center py-2">
+          <p className="text-[10px] font-bold text-black uppercase tracking-widest leading-none">
+            Ticket Verification
+          </p>
+          <p className="text-xs font-black text-black uppercase tracking-tight mt-1">
+            Attendly Portal Entry
+          </p>
+        </div>
+
+        {/* Digital verification scan feedback */}
+        <div className="border-t border-orange-950/10 pt-4 flex flex-col gap-1.5">
+          <div className="flex justify-between items-center text-[8px] font-bold uppercase tracking-widest text-black">
+            <span className="flex items-center gap-1.5">
+              <span className="flex h-1.5 w-1.5 rounded-full bg-black" />
+              {statusText}
+            </span>
+            <span className="font-mono text-black">{progress}%</span>
+          </div>
+          <div className="h-0.5 w-full bg-slate-200/80 rounded-full overflow-hidden">
+            <div
+              className={`h-full transition-all duration-100 rounded-full ${
+                progress === 100 ? "bg-emerald-500" : "bg-orange-500"
+              }`}
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>

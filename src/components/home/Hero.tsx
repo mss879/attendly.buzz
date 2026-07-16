@@ -101,17 +101,17 @@ export function Hero({ eventName }: { eventName: string }) {
         aria-hidden
         className="hero-chip absolute left-6 top-24 hidden -rotate-6 rounded-2xl bg-white/40 p-4 shadow-xl shadow-orange-950/10 ring-1 ring-white/60 backdrop-blur-md xl:left-16 xl:block"
       >
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-black">
           Grandstand seat
         </p>
-        <p className="mt-0.5 font-mono text-lg font-bold tracking-tight text-slate-900">
+        <p className="mt-0.5 font-mono text-lg font-bold tracking-tight text-black">
           D12
         </p>
         <div className="mt-2 flex items-end gap-[3px]">
           {[7, 12, 8, 14, 6, 11, 9, 13, 7, 10].map((h, i) => (
             <span
               key={i}
-              className="w-[3px] rounded-full bg-slate-900/80"
+              className="w-[3px] rounded-full bg-black/80"
               style={{ height: `${h * 1.6}px` }}
             />
           ))}
@@ -126,7 +126,7 @@ export function Hero({ eventName }: { eventName: string }) {
         aria-hidden
         className="hero-chip absolute right-6 top-32 hidden rotate-6 rounded-2xl bg-white/40 p-4 shadow-xl shadow-orange-950/10 ring-1 ring-white/60 backdrop-blur-md xl:right-16 xl:block"
       >
-        <svg viewBox="0 0 44 44" className="h-20 w-20 text-slate-900">
+        <svg viewBox="0 0 44 44" className="h-20 w-20 text-black">
           <g fill="currentColor">
             <path d="M4 4h12v12H4zM8 8h4v4H8z" fillRule="evenodd" />
             <path d="M28 4h12v12H28zM32 8h4v4H32z" fillRule="evenodd" />
@@ -157,7 +157,7 @@ export function Hero({ eventName }: { eventName: string }) {
         Seat bookings are open
       </span>
 
-      <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
+      <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-bold tracking-tight text-black sm:text-5xl md:text-6xl">
         <Word>Your</Word> <Word>ticket</Word> <Word>to</Word> <Word>the</Word>{" "}
         {eventName.split(" ").map((word) => (
           <Fragment key={word}>
@@ -166,7 +166,7 @@ export function Hero({ eventName }: { eventName: string }) {
         ))}
       </h1>
 
-      <p className="hero-sub mx-auto mt-5 max-w-xl text-base text-slate-600 sm:text-lg">
+      <p className="hero-sub mx-auto mt-5 max-w-xl text-base text-black sm:text-lg">
         Pick your grandstand seats, pay by bank transfer, and get your personal
         QR ticket by email — flash it at the gate and walk right in.
       </p>
@@ -188,14 +188,14 @@ export function Hero({ eventName }: { eventName: string }) {
         <span className="hero-cta inline-block">
           <button
             onClick={() => scrollTo("#how-it-works")}
-            className="rounded-full bg-white/80 px-7 py-3 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-black/[0.06] transition hover:-translate-y-0.5 hover:bg-white"
+            className="rounded-full bg-white/80 px-7 py-3 text-sm font-bold text-black shadow-sm ring-1 ring-black/[0.06] transition hover:-translate-y-0.5 hover:bg-white"
           >
             How it works
           </button>
         </span>
       </div>
 
-      <p className="hero-cta mt-6 text-xs font-medium text-slate-500">
+      <p className="hero-cta mt-6 text-xs font-bold text-black">
         {formatLKR(seating.pricePerSeat)} per seat · Numbered grandstand seating
         · Personal QR ticket by email
       </p>

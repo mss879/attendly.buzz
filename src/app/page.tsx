@@ -75,7 +75,7 @@ export default function HomePage() {
         <HowItWorks />
 
         {/* Final call to action */}
-        <section className="px-4 pb-16 sm:px-7 sm:pb-20">
+        <section className="px-4 py-16 sm:px-7 sm:py-24">
           <ScrollReveal className="mx-auto max-w-3xl">
             <div className="relative overflow-hidden rounded-3xl bg-white/40 p-8 text-center shadow-lg shadow-orange-950/5 ring-1 ring-white/60 backdrop-blur-md sm:p-12 transition-all duration-300 hover:bg-white/50 hover:shadow-xl hover:shadow-orange-950/8">
               <span
@@ -90,10 +90,10 @@ export default function HomePage() {
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-orange-700">
                   {bradby.edition}
                 </p>
-                <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                <h2 className="mt-2 text-2xl font-bold tracking-tight text-black sm:text-3xl">
                   Grab your grandstand seats
                 </h2>
-                <p className="mx-auto mt-3 max-w-md text-sm text-slate-500 sm:text-base">
+                <p className="mx-auto mt-3 max-w-md text-sm text-black sm:text-base">
                   {formatLKR(seating.pricePerSeat)} per seat · numbered
                   cinema-style seating · your QR ticket lands in your inbox
                   after the organizers verify your payment.

@@ -45,11 +45,20 @@ export const metadata: Metadata = {
     title,
     description,
     locale: "en_US",
+    images: [
+      {
+        url: "/opengraph-image.webp",
+        width: 1024,
+        height: 1024,
+        alt: title,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title,
     description,
+    images: ["/opengraph-image.webp"],
   },
   robots: {
     index: true,

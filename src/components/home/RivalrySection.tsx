@@ -140,7 +140,7 @@ export function RivalrySection() {
   const { teams } = bradby;
 
   return (
-    <section ref={ref} id="rivalry" className="scroll-mt-8 px-4 pb-16 sm:px-7 sm:pb-20">
+    <section ref={ref} id="rivalry" className="scroll-mt-8 px-4 py-16 sm:px-7 sm:py-24">
       <div className="relative overflow-hidden rounded-3xl bg-slate-950 px-4 py-12 sm:px-10 sm:py-16">
         {/* Stadium night glows behind each side */}
         <div

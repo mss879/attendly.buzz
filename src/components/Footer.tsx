@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function Footer({ admin = false }: { admin?: boolean }) {
   return (
-    <footer className="flex flex-col items-center justify-center gap-2 pt-6 pb-4 text-[11px] font-medium uppercase tracking-wider text-orange-950/60">
+    <footer className="flex flex-col items-center justify-center gap-2 pt-6 pb-4 text-[11px] font-bold uppercase tracking-wider text-black">
       <div className="flex flex-wrap items-center justify-center gap-1">
         <span>{admin ? "Attendly Admin" : "Attendly"}</span>
         <span>·</span>
@@ -25,7 +25,7 @@ export function Footer({ admin = false }: { admin?: boolean }) {
       <div>
         <Link
           href="/privacy"
-          className="transition hover:text-orange-800 hover:underline underline-offset-4 text-orange-950/50 hover:text-orange-950/80"
+          className="transition hover:text-orange-800 hover:underline underline-offset-4 text-black hover:text-black/80"
         >
           Privacy Policy
         </Link>
