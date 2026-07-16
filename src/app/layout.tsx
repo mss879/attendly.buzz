@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { appConfig } from "@/lib/config";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,12 +12,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const title = "Attendly — Host & Book Event Tickets Seamlessly";
+const SITE_URL = "https://www.attendly.buzz";
+
+const title = "Attendly — Smart Event Ticketing & Seat Booking Platform";
 const description =
-  "Create, host, and book tickets for premium events. Attendly offers interactive seating maps, secure payment validation, and instant digital QR entry tickets for event organizers and attendees.";
+  "Book event tickets in seconds. Pick numbered seats on an interactive grandstand map, pay via bank transfer, upload your payment slip for instant verification, and receive a personal QR ticket by email — one scan at the gate and you're in. Powered by ARC AI.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(appConfig.appUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: title,
     template: "%s · Attendly",
@@ -27,12 +28,16 @@ export const metadata: Metadata = {
   applicationName: "Attendly",
   keywords: [
     "event ticketing platform",
-    "ticket booking portal",
-    "seating map reservation",
-    "secure ticket validation",
-    "QR gate entry check-in",
-    "event seating planner",
-    "Attendly events",
+    "online seat booking",
+    "interactive seating map",
+    "QR code event ticket",
+    "bank transfer ticket payment",
+    "payment slip verification",
+    "event check-in system",
+    "grandstand seat reservation",
+    "digital event tickets",
+    "event management platform",
+    "Attendly",
   ],
   authors: [{ name: "ARC AI", url: "https://www.arcai.agency" }],
   creator: "ARC AI",
@@ -40,16 +45,18 @@ export const metadata: Metadata = {
   category: "events",
   openGraph: {
     type: "website",
+    url: SITE_URL,
     siteName: "Attendly",
     title,
     description,
     locale: "en_US",
     images: [
       {
-        url: "/opengraph-image.png",
+        url: `${SITE_URL}/opengraph-image.png`,
         width: 1024,
         height: 1024,
-        alt: title,
+        alt: "Attendly — Smart Event Ticketing & Seat Booking Platform",
+        type: "image/png",
       },
     ],
   },
@@ -57,7 +64,14 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title,
     description,
-    images: ["/opengraph-image.png"],
+    images: [
+      {
+        url: `${SITE_URL}/opengraph-image.png`,
+        width: 1024,
+        height: 1024,
+        alt: "Attendly — Smart Event Ticketing & Seat Booking Platform",
+      },
+    ],
   },
   robots: {
     index: true,

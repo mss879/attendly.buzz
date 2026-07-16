@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+const SITE_URL = "https://www.attendly.buzz";
+
 export default function HomePage() {
   const jsonLd = {
     "@context": "https://schema.org",
@@ -23,7 +25,7 @@ export default function HomePage() {
       {
         "@type": "WebSite",
         name: appConfig.appName,
-        url: appConfig.appUrl,
+        url: SITE_URL,
         description: `${bradby.title} — ${bradby.subtitle}. Book grandstand seats, pay by bank transfer and check in at the gate with a personal QR ticket.`,
       },
       {
@@ -46,7 +48,7 @@ export default function HomePage() {
           price: seating.pricePerSeat,
           priceCurrency: "LKR",
           availability: "https://schema.org/InStock",
-          url: `${appConfig.appUrl}/book`,
+          url: `${SITE_URL}/book`,
         },
         organizer: { "@type": "Organization", name: "ARC AI" },
       },
