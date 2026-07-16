@@ -52,11 +52,11 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: `${SITE_URL}/opengraph-image.png`,
-        width: 1024,
-        height: 1024,
+        url: `${SITE_URL}/opengraph-image.jpg`,
+        width: 1200,
+        height: 630,
         alt: "Attendly — Smart Event Ticketing & Seat Booking Platform",
-        type: "image/png",
+        type: "image/jpeg",
       },
     ],
   },
@@ -66,9 +66,9 @@ export const metadata: Metadata = {
     description,
     images: [
       {
-        url: `${SITE_URL}/opengraph-image.png`,
-        width: 1024,
-        height: 1024,
+        url: `${SITE_URL}/opengraph-image.jpg`,
+        width: 1200,
+        height: 630,
         alt: "Attendly — Smart Event Ticketing & Seat Booking Platform",
       },
     ],
