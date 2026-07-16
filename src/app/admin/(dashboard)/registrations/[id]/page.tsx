@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Avatar } from "@/components/admin/Avatar";
-import { FadeIn } from "@/components/admin/FadeIn";
+import { FadeIn } from "@/components/FadeIn";
 import { ReviewButtons } from "@/components/admin/ReviewButtons";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { PaymentSlip, Registration, Ticket } from "@/lib/types";
@@ -26,19 +26,27 @@ export default async function RegistrationDetailPage({
     .maybeSingle<Registration>();
   if (!registration) notFound();
 
-  const [{ data: slips }, { data: ticket }] = await Promise.all([
-    supabase
-      .from("payment_slips")
-      .select("*")
-      .eq("registration_id", id)
-      .order("uploaded_at", { ascending: false })
-      .returns<PaymentSlip[]>(),
-    supabase
-      .from("tickets")
-      .select("*")
-      .eq("registration_id", id)
-      .maybeSingle<Ticket>(),
-  ]);
+  const [{ data: slips }, { data: ticket }, { data: seatRows }] =
+    await Promise.all([
+      supabase
+        .from("payment_slips")
+        .select("*")
+        .eq("registration_id", id)
+        .order("uploaded_at", { ascending: false })
+        .returns<PaymentSlip[]>(),
+      supabase
+        .from("tickets")
+        .select("*")
+        .eq("registration_id", id)
+        .maybeSingle<Ticket>(),
+      supabase
+        .from("booked_seats")
+        .select("seat_no")
+        .eq("registration_id", id)
+        .order("seat_no")
+        .returns<{ seat_no: string }[]>(),
+    ]);
+  const seats = (seatRows ?? []).map((s) => s.seat_no);
 
   // Signed URLs so organizers can view files in the private bucket.
   const slipViews = await Promise.all(
@@ -97,6 +105,16 @@ export default async function RegistrationDetailPage({
               {new Date(registration.created_at).toLocaleString()}
             </dd>
           </div>
+          {seats.length > 0 && (
+            <div className="rounded-xl bg-orange-50 px-3.5 py-2.5">
+              <dt className="text-xs text-orange-500">
+                {seats.length === 1 ? "Seat" : `Seats (${seats.length})`}
+              </dt>
+              <dd className="font-mono font-semibold text-orange-900">
+                {seats.join(", ")}
+              </dd>
+            </div>
+          )}
           {ticket && (
             <div className="rounded-xl bg-emerald-50 px-3.5 py-2.5">
               <dt className="text-xs text-emerald-500">Ticket</dt>

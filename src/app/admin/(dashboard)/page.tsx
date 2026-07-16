@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FadeIn } from "@/components/admin/FadeIn";
+import { FadeIn } from "@/components/FadeIn";
 import { StatCards, type Stat } from "@/components/admin/StatCards";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { eventConfig } from "@/lib/config";

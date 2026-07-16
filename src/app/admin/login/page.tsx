@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Logo } from "@/components/Logo";
-import { AuroraBackground } from "@/components/admin/AuroraBackground";
-import { FadeIn } from "@/components/admin/FadeIn";
+import { AuroraBackground } from "@/components/AuroraBackground";
+import { FadeIn } from "@/components/FadeIn";
 import { LoginForm } from "@/components/admin/LoginForm";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 

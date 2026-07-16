@@ -18,10 +18,11 @@ Event ticketing system for alumni ("EX") events: ticket reservation → payment-
 ### 1. Supabase
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. In the **SQL Editor**, run the three migration files **in order**:
+2. In the **SQL Editor**, run the four migration files **in order**:
    - `supabase/migrations/0001_registrations.sql`
    - `supabase/migrations/0002_payment_slips.sql`
    - `supabase/migrations/0003_tickets.sql`
+   - `supabase/migrations/0004_seats.sql`
 3. Create organizer accounts: **Authentication → Users → Add user** (email + password, confirm email). Every authenticated user is an organizer.
 
 ### 2. Resend

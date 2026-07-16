@@ -11,6 +11,13 @@ export interface Registration {
   created_at: string;
 }
 
+export interface BookedSeat {
+  id: string;
+  registration_id: string;
+  seat_no: string;
+  created_at: string;
+}
+
 export interface PaymentSlip {
   id: string;
   registration_id: string;

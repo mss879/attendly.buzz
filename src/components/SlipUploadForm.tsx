@@ -20,7 +20,12 @@ export function SlipUploadForm({ token }: { token: string }) {
       setError("Please choose your payment slip file first.");
       return;
     }
-    if (!(file.type in SLIP_ALLOWED_TYPES)) {
+
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    const isMimeAllowed = file.type in SLIP_ALLOWED_TYPES;
+    const isExtAllowed = ext && ["jpg", "jpeg", "png", "webp", "pdf"].includes(ext);
+
+    if (!isMimeAllowed && !isExtAllowed) {
       setError("Only JPG, PNG, WebP or PDF files are accepted.");
       return;
     }
@@ -50,29 +55,53 @@ export function SlipUploadForm({ token }: { token: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <label
-        htmlFor="slip"
-        className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center transition hover:border-indigo-400 hover:bg-indigo-50/40"
-      >
-        <span className="text-2xl">🧾</span>
-        <span className="mt-2 text-sm font-semibold text-slate-700">
-          {fileName ?? "Tap to choose your payment slip"}
-        </span>
-        <span className="mt-1 text-xs text-slate-400">
-          JPG · PNG · WebP · PDF, up to 5 MB
-        </span>
-        <input
-          id="slip"
-          ref={fileRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,application/pdf"
-          className="hidden"
-          onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
-        />
-      </label>
+      <div className="relative">
+        <label
+          htmlFor="slip"
+          className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-4 py-8 text-center transition focus-within:ring-2 focus-within:ring-orange-300 ${
+            fileName
+              ? "border-emerald-300 bg-emerald-50/60"
+              : "border-orange-200 bg-orange-50/40 hover:border-orange-400 hover:bg-orange-50"
+          }`}
+        >
+          <span className="text-2xl">{fileName ? "✅" : "🧾"}</span>
+          <span className="mt-2 text-sm font-semibold text-slate-700 text-ellipsis overflow-hidden max-w-full px-4">
+            {fileName ?? "Tap to choose your payment slip"}
+          </span>
+          <span className="mt-1 text-xs text-slate-500">
+            {fileName ? "Tap to choose a different file" : "JPG · PNG · WebP · PDF, up to 5 MB"}
+          </span>
+          {/* sr-only (not display:none) keeps the input keyboard-focusable */}
+          <input
+            id="slip"
+            ref={fileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,application/pdf"
+            className="sr-only"
+            onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+          />
+        </label>
+        {fileName && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setFileName(null);
+              if (fileRef.current) fileRef.current.value = "";
+            }}
+            className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-slate-200/80 text-slate-600 hover:bg-red-100 hover:text-red-700 transition"
+            title="Remove selected slip"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </div>
 
       {error && (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-red-100">
           {error}
         </p>
       )}
@@ -80,7 +109,7 @@ export function SlipUploadForm({ token }: { token: string }) {
       <button
         type="submit"
         disabled={uploading}
-        className="w-full rounded-lg bg-indigo-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-full bg-orange-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-orange-600/25 transition hover:-translate-y-0.5 hover:bg-orange-700 hover:shadow-xl hover:shadow-orange-600/25 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
       >
         {uploading ? "Uploading…" : "Upload payment slip"}
       </button>

@@ -5,8 +5,8 @@ export const appConfig = {
 };
 
 export const eventConfig = {
-  eventName: process.env.EVENT_NAME ?? "Attendly Event",
-  ticketPrice: process.env.TICKET_PRICE ?? "",
+  eventName: process.env.EVENT_NAME ?? "80th Bradby Viewing Party",
+  ticketPrice: process.env.TICKET_PRICE ?? "Rs 1,500 per seat",
   bank: {
     name: process.env.BANK_NAME ?? "",
     accountName: process.env.BANK_ACCOUNT_NAME ?? "",

@@ -52,6 +52,16 @@ export async function POST(request: Request) {
   const link = portalUrl(registration.access_token);
 
   if (action === "reject") {
+    // Release the booked seats so they become available on the front-end map
+    const { error: seatsDeleteError } = await supabase
+      .from("booked_seats")
+      .delete()
+      .eq("registration_id", registrationId);
+    if (seatsDeleteError) {
+      console.error("[review] reject seat delete failed:", seatsDeleteError);
+      return NextResponse.json({ error: "Could not release seats." }, { status: 500 });
+    }
+
     const { error } = await supabase
       .from("registrations")
       .update({ payment_status: "rejected" })
@@ -91,10 +101,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not update status." }, { status: 500 });
   }
 
+  const { data: seatRows } = await supabase
+    .from("booked_seats")
+    .select("seat_no")
+    .eq("registration_id", registrationId)
+    .order("seat_no")
+    .returns<{ seat_no: string }[]>();
+
   const mail = ticketEmail({
     fullName: registration.full_name,
     batch: registration.batch,
     ticketNumber: ticket.ticket_number,
+    seats: (seatRows ?? []).map((s) => s.seat_no),
     portalUrl: link,
   });
 

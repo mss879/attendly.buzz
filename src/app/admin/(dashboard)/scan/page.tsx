@@ -1,4 +1,4 @@
-import { FadeIn } from "@/components/admin/FadeIn";
+import { FadeIn } from "@/components/FadeIn";
 import { GateScanner } from "@/components/admin/GateScanner";
 
 export default function ScanPage() {

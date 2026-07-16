@@ -42,13 +42,21 @@ void main() {
 `;
 
 export function AuroraBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    // A fresh canvas per effect run: React StrictMode re-runs effects, and a
+    // canvas whose context was lost on cleanup can never render again.
+    const canvas = document.createElement("canvas");
+    canvas.className = "h-full w-full";
+    wrap.appendChild(canvas);
     const gl = canvas.getContext("webgl", { antialias: false });
-    if (!gl) return; // CSS fallback stays visible
+    if (!gl) {
+      canvas.remove();
+      return; // CSS fallback stays visible
+    }
 
     function compile(type: number, src: string) {
       const shader = gl!.createShader(type)!;
@@ -83,22 +91,29 @@ export function AuroraBackground() {
     const uRes = gl.getUniformLocation(program, "u_res");
     const uTime = gl.getUniformLocation(program, "u_time");
 
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const start = performance.now();
+    function draw(now: number) {
+      gl!.uniform2f(uRes, canvas.width, canvas.height);
+      gl!.uniform1f(uTime, (now - start) / 1000);
+      gl!.drawArrays(gl!.TRIANGLES, 0, 3);
+    }
+
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas!.width = Math.floor(window.innerWidth * dpr);
-      canvas!.height = Math.floor(window.innerHeight * dpr);
-      gl!.viewport(0, 0, canvas!.width, canvas!.height);
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      gl!.viewport(0, 0, canvas.width, canvas.height);
+      // With reduced motion there is no animation loop to repaint after a
+      // resize clears the buffer — draw a single fresh frame here.
+      if (reduceMotion) draw(performance.now());
     }
     resize();
     window.addEventListener("resize", resize);
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
-    const start = performance.now();
     function frame(now: number) {
-      gl!.uniform2f(uRes, canvas!.width, canvas!.height);
-      gl!.uniform1f(uTime, (now - start) / 1000);
-      gl!.drawArrays(gl!.TRIANGLES, 0, 3);
+      draw(now);
       if (!reduceMotion) raf = requestAnimationFrame(frame);
     }
     raf = requestAnimationFrame(frame);
@@ -107,19 +122,19 @@ export function AuroraBackground() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
+      canvas.remove();
     };
   }, []);
 
   return (
     <div
+      ref={wrapRef}
       aria-hidden
       className="fixed inset-0 -z-10"
       style={{
         background:
           "radial-gradient(120% 90% at 15% 0%, #ee6a29 0%, #f9974f 30%, #fcd9b3 60%, #faf3ea 100%)",
       }}
-    >
-      <canvas ref={canvasRef} className="h-full w-full" />
-    </div>
+    />
   );
 }

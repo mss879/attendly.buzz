@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Avatar } from "@/components/admin/Avatar";
-import { FadeIn } from "@/components/admin/FadeIn";
+import { FadeIn } from "@/components/FadeIn";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { PaymentStatus, Registration } from "@/lib/types";
 

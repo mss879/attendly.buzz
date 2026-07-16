@@ -1,5 +1,6 @@
 import { Logo } from "@/components/Logo";
-import { AuroraBackground } from "@/components/admin/AuroraBackground";
+import { Footer } from "@/components/Footer";
+import { AuroraBackground } from "@/components/AuroraBackground";
 import { Sidebar } from "@/components/admin/Sidebar";
 import { requireAdmin } from "@/lib/supabase/auth";
 
@@ -54,9 +55,7 @@ export default async function AdminLayout({
         </div>
       </div>
 
-      <p className="pt-3 text-center text-[11px] font-medium uppercase tracking-wider text-orange-950/50">
-        Attendly Admin · Powered by ARC AI
-      </p>
+      <Footer admin />
     </div>
   );
 }

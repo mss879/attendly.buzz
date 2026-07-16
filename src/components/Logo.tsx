@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 const sizes = {
-  sm: { word: "text-lg", tag: "text-[8px]", mark: "h-6 w-6" },
-  md: { word: "text-2xl", tag: "text-[9px]", mark: "h-8 w-8" },
-  lg: { word: "text-4xl", tag: "text-[11px]", mark: "h-11 w-11" },
+  sm: { word: "text-xl", tag: "text-[7px]", mark: "h-7 w-7" },
+  md: { word: "text-3xl", tag: "text-[8px]", mark: "h-10 w-10" },
+  lg: { word: "text-5xl", tag: "text-[10px]", mark: "h-14 w-14" },
 } as const;
 
 const accents = {
@@ -13,22 +13,14 @@ const accents = {
 
 function Mark({ className }: { className: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} aria-hidden>
-      <defs>
-        <linearGradient id="attendly-mark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#f97316" />
-          <stop offset="100%" stopColor="#dc2626" />
-        </linearGradient>
-      </defs>
-      <circle cx="16" cy="16" r="14" fill="url(#attendly-mark)" />
-      <path
-        d="M6 19c4-3.5 16-3.5 20 0M8 13.5c3.5-2.8 12.5-2.8 16 0M11 8.8c2.6-1.7 7.4-1.7 10 0"
-        stroke="#fff"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        fill="none"
+    <span className={`${className} relative inline-block`} aria-hidden>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo-icon.png"
+        alt="Logo Icon"
+        className="logo-spin-slow h-full w-full object-contain"
       />
-    </svg>
+    </span>
   );
 }
 

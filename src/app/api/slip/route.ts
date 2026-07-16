@@ -21,7 +21,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const ext = SLIP_ALLOWED_TYPES[file.type];
+  let ext = SLIP_ALLOWED_TYPES[file.type];
+  if (!ext && file.name) {
+    const fileExt = file.name.split(".").pop()?.toLowerCase();
+    if (fileExt && ["jpg", "jpeg", "png", "webp", "pdf"].includes(fileExt)) {
+      ext = fileExt === "jpeg" ? "jpg" : fileExt;
+    }
+  }
   if (!ext) {
     return NextResponse.json(
       { error: "Only JPG, PNG, WebP or PDF files are accepted." },

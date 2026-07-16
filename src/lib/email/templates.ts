@@ -62,37 +62,41 @@ function detailRow(label: string, value: string): string {
   </tr>`;
 }
 
-interface ReservationEmailArgs {
+interface BookingEmailArgs {
   fullName: string;
   batch: string;
+  seats: string[];
+  total: number;
   reference: string;
   portalUrl: string;
 }
 
-export function reservationEmail({ fullName, batch, reference, portalUrl }: ReservationEmailArgs) {
-  const { bank, ticketPrice, eventName } = eventConfig;
+export function bookingEmail({
+  fullName,
+  batch,
+  seats,
+  total,
+  reference,
+  portalUrl,
+}: BookingEmailArgs) {
+  const { eventName } = eventConfig;
   const body = `
     <p style="margin:0 0 16px;">Hi <strong>${escapeHtml(fullName)}</strong>,</p>
-    <p style="margin:0 0 16px;">Your ticket reservation for <strong>${escapeHtml(eventName)}</strong> has been received. Here are your reservation details:</p>
+    <p style="margin:0 0 16px;">Your seat booking for <strong>${escapeHtml(eventName)}</strong> has been received, and your payment slip is with the organizers for review. Here are your booking details:</p>
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
-      ${detailRow("Reservation ref", reference)}
+      ${detailRow("Booking ref", reference)}
       ${detailRow("Name", fullName)}
       ${detailRow("Batch", `Class of ${batch}`)}
-      ${ticketPrice ? detailRow("Ticket price", ticketPrice) : ""}
+      ${detailRow(seats.length === 1 ? "Seat" : "Seats", seats.join(", "))}
+      ${detailRow("Total", `Rs ${total.toLocaleString("en-LK")}`)}
     </table>
-    <p style="margin:0 0 8px;font-weight:bold;color:#1e293b;">How to complete your payment</p>
-    <p style="margin:0 0 12px;">Transfer the ticket amount to the account below, then upload your payment slip on your personal page. Once we verify it, your ticket with a QR code will be emailed to you.</p>
-    <table role="presentation" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 16px;margin:0 0 8px;width:100%;">
-      ${bank.name ? detailRow("Bank", bank.name) : ""}
-      ${bank.accountName ? detailRow("Account name", bank.accountName) : ""}
-      ${bank.accountNumber ? detailRow("Account number", bank.accountNumber) : ""}
-      ${bank.branch ? detailRow("Branch", bank.branch) : ""}
-    </table>
-    ${button(portalUrl, "Upload payment slip")}
-    <p style="margin:0;color:#64748b;font-size:13px;">Keep this email — the link above is your personal page for tracking your reservation and ticket.</p>
+    <p style="margin:0 0 8px;font-weight:bold;color:#1e293b;">What happens next</p>
+    <p style="margin:0 0 12px;">The organizers will verify your bank transfer. Once verified, your ticket with a QR code will be emailed to you — show it at the gate to check in. You can track the review on your personal page any time.</p>
+    ${button(portalUrl, "Track my booking")}
+    <p style="margin:0;color:#64748b;font-size:13px;">Keep this email — the link above is your personal page for tracking your booking and ticket.</p>
   `;
   return {
-    subject: `Reservation received — ${eventName}`,
+    subject: `Booking received — ${eventName}`,
     html: layout(body),
   };
 }
@@ -101,16 +105,18 @@ interface TicketEmailArgs {
   fullName: string;
   batch: string;
   ticketNumber: string;
+  seats: string[];
   portalUrl: string;
 }
 
-export function ticketEmail({ fullName, batch, ticketNumber, portalUrl }: TicketEmailArgs) {
+export function ticketEmail({ fullName, batch, ticketNumber, seats, portalUrl }: TicketEmailArgs) {
   const { eventName } = eventConfig;
   const body = `
     <p style="margin:0 0 16px;">Hi <strong>${escapeHtml(fullName)}</strong>,</p>
     <p style="margin:0 0 16px;">Your payment has been verified — your ticket for <strong>${escapeHtml(eventName)}</strong> is confirmed! 🎉</p>
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
       ${detailRow("Ticket number", ticketNumber)}
+      ${seats.length > 0 ? detailRow(seats.length === 1 ? "Seat" : "Seats", seats.join(", ")) : ""}
       ${detailRow("Name", fullName)}
       ${detailRow("Batch", `Class of ${batch}`)}
     </table>

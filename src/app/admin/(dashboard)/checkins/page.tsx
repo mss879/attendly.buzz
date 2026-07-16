@@ -1,5 +1,5 @@
 import { Avatar } from "@/components/admin/Avatar";
-import { FadeIn } from "@/components/admin/FadeIn";
+import { FadeIn } from "@/components/FadeIn";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Registration, Ticket } from "@/lib/types";
 
