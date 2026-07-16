@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { Logo } from "@/components/Logo";
 import { Footer } from "@/components/Footer";
+import { Preloader } from "@/components/Preloader";
 import { EventDetails } from "@/components/home/EventDetails";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
@@ -110,6 +111,7 @@ export default function HomePage() {
       </div>
 
       <Footer />
+      <Preloader />
 
       <script
         type="application/ld+json"
