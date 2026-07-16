@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Attendly
 
-## Getting Started
+*Powered by ARC AI*
 
-First, run the development server:
+Event ticketing system for alumni ("EX") events: ticket reservation → payment-slip tracking → QR ticket issuance → gate check-in scanning.
+
+**Stack:** Next.js 16 (App Router, TypeScript, Tailwind) · Supabase (Postgres, Auth, Storage) · Resend (email)
+
+## The flow
+
+1. **Reserve** — an EX fills in name, phone, email and batch on `/`. They get a reservation email with bank payment instructions and a personal link.
+2. **Pay & upload** — after transferring the fee, they upload the payment slip on their personal page (`/r/<token>`).
+3. **Verify** — an organizer reviews the slip in `/admin/registrations` and clicks **Verify**. The system issues a sequential ticket number + QR code and emails it.
+4. **Gate** — staff open `/admin/scan` on a phone, scan the QR (or type the ticket number), and the participant is checked in. Duplicate scans show a red "ALREADY CHECKED IN" warning. `/admin/checkins` lists everyone inside.
+
+## Setup
+
+### 1. Supabase
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. In the **SQL Editor**, run the three migration files **in order**:
+   - `supabase/migrations/0001_registrations.sql`
+   - `supabase/migrations/0002_payment_slips.sql`
+   - `supabase/migrations/0003_tickets.sql`
+3. Create organizer accounts: **Authentication → Users → Add user** (email + password, confirm email). Every authenticated user is an organizer.
+
+### 2. Resend
+
+1. Create an API key at [resend.com/api-keys](https://resend.com/api-keys).
+2. For production, verify your domain and set `EMAIL_FROM` to e.g. `Attendly <tickets@yourdomain.com>`. Without a verified domain, Resend only delivers to your own account email (using `onboarding@resend.dev`).
+
+### 3. Environment
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.local.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fill in the Supabase URL + keys, Resend key, your public app URL, and the event/bank details (these appear in emails and on the payment page).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Run
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+- Public registration: `http://localhost:3000/`
+- Admin portal: `http://localhost:3000/admin`
 
-To learn more about Next.js, take a look at the following resources:
+> **Note:** the gate scanner needs camera access, which browsers only allow on `localhost` or **HTTPS** — deploy (e.g. Vercel) before using it on phones at the venue.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Design notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Security:** all writes go through server route handlers using the service-role key. RLS is enabled on every table with no public policies. Registrants authenticate with an unguessable personal token; organizers with Supabase Auth. Payment slips live in a private bucket, viewed via short-lived signed URLs.
+- **QR reliability:** the QR encodes only a 36-char opaque token (low QR version → large modules), error-correction level Q, 600×600 PNG with a proper quiet zone — scans fast even printed or on cracked screens. Manual ticket-number entry is the gate fallback.
+- **Double-entry protection:** check-in is a single atomic `UPDATE … WHERE checked_in_at IS NULL`, so the same ticket can never check in twice, even from two gates simultaneously.
+- **Fail-soft email:** if Resend is down or unconfigured, reservations/verifications still succeed; the personal link is also shown on-screen after registering.
